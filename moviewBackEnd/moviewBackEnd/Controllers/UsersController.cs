@@ -103,6 +103,20 @@ namespace moviewBackEnd.Controllers
             return users;
         }
 
+        [HttpGet("SearchByUser/{searchInt}")]
+        public async Task<ActionResult<IEnumerable<Users>>> Search(int searchInt)
+        {
+            
+
+            // Choose transcriptions that has the phrase 
+            var users = await _context.Users.Where(user => user.UserId == searchInt).Include(user => user.Reviews).ThenInclude(user => user.Movie).ToListAsync();
+
+            // Removes all videos with empty transcription
+            users.RemoveAll(user => user.Reviews.Count == 0);
+            return Ok(users);
+
+        }
+
         private bool UsersExists(int id)
         {
             return _context.Users.Any(e => e.UserKey == id);

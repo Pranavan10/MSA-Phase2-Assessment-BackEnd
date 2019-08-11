@@ -98,6 +98,22 @@ namespace moviewBackEnd.Controllers
 
             return movies;
         }
+        [HttpGet("SearchByMovie/{searchString}")]
+        public async Task<ActionResult<IEnumerable<Movies>>> Search(string searchString)
+        {
+            if (String.IsNullOrEmpty(searchString))
+            {
+                return BadRequest("Search string cannot be null or empty.");
+            }
+
+            // Choose transcriptions that has the phrase 
+            var movies = await _context.Movies.Where(movie=> movie.Movie==searchString).Include(movie => movie.Reviews).ThenInclude(movie => movie.UserKeyNavigation).ToListAsync();
+
+            // Removes all videos with empty transcription
+            movies.RemoveAll(movie => movie.Reviews.Count == 0);
+            return Ok(movies);
+
+        }
 
         private bool MoviesExists(int id)
         {

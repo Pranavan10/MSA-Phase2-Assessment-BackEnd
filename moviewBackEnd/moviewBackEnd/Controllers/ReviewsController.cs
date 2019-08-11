@@ -99,32 +99,7 @@ namespace moviewBackEnd.Controllers
 
             return reviews;
         }
-        [HttpGet("SearchByMovie/{searchString}")]
-        public async Task<ActionResult<IEnumerable<Reviews>>> Search(string searchString)
-        {
-            if (String.IsNullOrEmpty(searchString))
-            {
-                return BadRequest("Search string cannot be null or empty.");
-            }
-
-            // Choose transcriptions that has the phrase 
-            var reviews = await _context.Reviews.Include(review => review.Movie).Include(review => review.UserKeyNavigation).Select(review => new Reviews
-            {
-                ReviewId = review.ReviewId,
-                Rating = review.Rating,
-                Review = review.Review,
-                MovieId= review.MovieId,
-                Movie= review.Movie.Where(Movies => Movies.Contains(searchString)).ToList(),
-                UserKey =review.UserKey,
-                UserKeyNavigation= review.UserKeyNavigation,
-                
-            }).ToListAsync();
-
-            // Removes all videos with empty transcription
-            
-            return Ok(reviews);
-
-        }
+        
 
         private bool ReviewsExists(int id)
         {
